@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio | B.Tech Student</title>
+    <style>
+        :root {
+            --bg-dark: #0a0f1d;
+            --card-bg: rgba(20, 30, 55, 0.4);
+            --border-glow: rgba(56, 189, 248, 0.2);
+            --accent: #38bdf8;
+            --accent-purple: #a855f7;
+            --accent-linkedin: #0077b5;
+            --accent-email: #10b981;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Background Particle Canvas */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Navigation Bar */
+        nav {
+            position: fixed;
+            top: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 85%;
+            max-width: 1100px;
+            background: rgba(10, 15, 29, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 1.2rem;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, var(--accent), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        nav ul a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav ul a:hover {
+            color: var(--accent);
+        }
+
+        /* Sections */
+        section {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 8rem 2rem 4rem 2rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .hero-content {
+            max-width: 750px;
+        }
+
+        .college-tag {
+            display: inline-block;
+            background: rgba(168, 85, 247, 0.1);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            color: var(--accent-purple);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        h1 {
+            font-size: 3.8rem;
+            line-height: 1.1;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            letter-spacing: -1px;
+        }
+
+        h1 span {
+            background: linear-gradient(to right, var(--accent), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .branch {
+            font-size: 1.5rem;
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            line-height: 1.6;
+        }
+
+        /* GLOWING BUTTONS */
+        .btn-group {
+            display: flex;
+            gap: 1.2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            padding: 0.9rem 2rem;
+            border-radius: 30px;
+            text-decoration: none;
+            transition: transform 0.3s, box-shadow 0.3s, background 0.3s, border-color 0.3s, color 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, var(--accent), var(--accent-purple));
+            color: #000;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 35px rgba(56, 189, 248, 0.7);
+        }
+
+        .btn-social {
+            background: rgba(255, 255, 255, 0.02);
+            color: var(--text-main);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .btn-social svg {
+            fill: currentColor;
+        }
+
+        .btn-github:hover {
+            transform: translateY(-3px);
+            border-color: var(--accent);
+            color: var(--accent);
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.5);
+        }
+
+        .btn-linkedin:hover {
+            transform: translateY(-3px);
+            border-color: #0077b5;
+            color: #0077b5;
+            box-shadow: 0 0 25px rgba(0, 119, 181, 0.6);
+        }
+
+        .btn-email:hover {
+            transform: translateY(-3px);
+            border-color: var(--accent-email);
+            color: var(--accent-email);
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.6);
+        }
+
+        /* Section Header */
+        .section-header {
+            margin-bottom: 2.5rem;
+        }
+
+        .section-header h2 {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .section-header p {
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        /* Project Cards */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            border-radius: 16px;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--border-glow);
+        }
+
+        .card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .card .project-type {
+            font-size: 0.85rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            letter-spacing: 0.5px;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tech-tags span {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 0.25rem 0.7rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+        }
+
+        /* Skills Table Layout */
+        .table-container {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 1.2rem 1.5rem;
+            text-align: left;
+        }
+
+        th {
+            background: rgba(255, 255, 255, 0.02);
+            color: var(--text-main);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            font-size: 0.9rem;
+        }
+
+        tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        tr:last-child {
+            border-bottom: none;
+        }
+
+        td strong {
+            color: var(--accent);
+        }
+
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        @media(max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            nav { width: 95%; padding: 0.8rem 1.2rem; }
+            nav ul { display: none; }
+            section { padding-top: 6rem; }
+            .btn-group { flex-direction: column; }
+            .btn { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Header Navigation -->
+    <nav>
+        <div class="logo">STUDENT<span>.PORTFOLIO</span></div>
+        <ul>
+            <li><a href="#home">About</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#skills">Skills</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Student Info -->
+    <section id="home">
+        <div class="hero-content">
+            <!-- ENTER YOUR COLLEGE NAME HERE -->
+            <div class="college-tag">St.Thomas of college of engineering & technology Kannur</div>
+            
+            <!-- ENTER YOUR NAME HERE -->
+            <h1>Hi, I'm <span>Sreenand T M</span></h1>
+            
+            <!-- ENTER YOUR B.TECH BRANCH HERE -->
+            <div class="branch">B.Tech Student in Computer Science Engineering(Data science)</div>
+            
+            <p class="hero-p">I am an engineering undergraduate focused on software development, building clean database integrations, and designing practical computer applications. Looking for learning opportunities and internships to apply my tech stack.</p>
+            
+            <div class="btn-group">
+                <a href="#projects" class="btn btn-primary">See My Projects</a>
+                <a href="#contact" class="btn btn-social btn-github">Contact Me</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Academic & Personal Projects Section -->
+    <section id="projects">
+        <div class="section-header">
+            <h2>Academic & Practical Projects</h2>
+            <p>Projects built during my engineering coursework and self-learning.</p>
+        </div>
+        <div class="grid">
+            
+            <!-- Project 1 -->
+            <div class="card">
+                <h3>MedicineDatabaseApp</h3>
+                <div class="project-type">Database Project</div>
+                <p>A native Java application mapped to a local WAMP server layout. Engineered specifically for processing medical inventory data and handling backend relational queries.</p>
+                <div class="tech-tags">
+                    <span>Java Swing</span>
+                    <span>WAMP Server</span>
+                    <span>MySQL Core</span>
+                    <span>ER Diagrams</span>
+                </div>
+            </div>
+
+            <!-- Project 2 -->
+            <div class="card">
+                <h3>STEM Tuition Media Campaign</h3>
+                <div class="project-type">Design & Marketing Project</div>
+                <p>Designed structured educational collateral configurations for secondary school mathematics, physics, and chemistry launch setups. Focused on clear data layout layouts.</p>
+                <div class="tech-tags">
+                    <span>Graphic Composition</span>
+                    <span>Information Architecture</span>
+                    <span>Asset Design</span>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Technical Skills Section -->
+    <section id="skills">
+        <div class="section-header">
+            <h2>Technical Skills</h2>
+            <p>Core development languages and design frameworks learned throughout my B.Tech curriculum.</p>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Programming & Databases</th>
+                        <th>Design & Layouts</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Languages:</strong> Java Core, Structured SQL</td>
+                        <td><strong>Aesthetics:</strong> Cinematic Framing, Vintage Grading Concepts</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Databases:</strong> WAMP Engine, MySQL Architecture</td>
+                        <td><strong>Lighting Styles:</strong> High-Key Studio, Shadow Contrast Techniques</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Systems Analysis:</strong> Entity-Relationship (ER) Diagrams</td>
+                        <td><strong>Layout Planning:</strong> Structural Posters, Minimal Marketing Media</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Contact & Social Handles Section -->
+    <section id="contact">
+        <div class="section-header">
+            <h2>Contact & Social Channels</h2>
+            <p>Feel free to reach out to me for internships, collaboration, or general tech talks.</p>
+        </div>
+        
+        <div class="btn-group">
+            <!-- GLOWING GITHUB BUTTON -->
+            <a href="https://github.com/sreenandtm027-droid" target="_blank" rel="noopener noreferrer" class="btn btn-social btn-github">
+                <svg height="20" width="20" viewBox="0 0 16 16">
+                    <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+                GitHub Profile
+            </a>
+
+            <!-- GLOWING LINKEDIN BUTTON -->
+            <a href="https://linkedin.com/in/sreenand-t-m-27410332b" target="_blank" rel="noopener noreferrer" class="btn btn-social btn-linkedin">
+                <svg height="20" width="20" viewBox="0 0 24 24">
+                    <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                </svg>
+                LinkedIn Connect
+            </a>
+
+            <!-- GLOWING EMAIL BUTTON (GMAIL) -->
+            <a href="mailto:sreenandtm027@gmail.com" class="btn btn-social btn-email">
+                <svg height="20" width="20" viewBox="0 0 24 24">
+                    <path d="M0 3v18h24v-18h-24zm21.518 2l-9.518 7.713-9.518-7.713h19.036zm-19.518 14v-11.817l10 8.104 10-8.104v11.817h-20z"/>
+                </svg>
+                Gmail Address
+            </a>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Student Engineering Portfolio. Created for Web Deployments.</p>
+    </footer>
+
+    <!-- Particle Mesh Background Animation Script -->
+    <script>
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let points = [];
+        const maxPoints = 50;
+        const connectionDistance = 120;
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Point {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.3;
+                this.vy = (Math.random() - 0.5) * 0.3;
+                this.radius = Math.random() * 2 + 1;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(56, 189, 248, 0.2)';
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < maxPoints; i++) {
+            points.push(new Point());
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            for (let i = 0; i < points.length; i++) {
+                points[i].update();
+                points[i].draw();
+                
+                for (let j = i + 1; j < points.length; j++) {
+                    const dx = points[i].x - points[j].x;
+                    const dy = points[i].y - points[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (dist < connectionDistance) {
+                        ctx.beginPath();
+                        ctx.moveTo(points[i].x, points[i].y);
+                        ctx.lineTo(points[j].x, points[j].y);
+                        const alpha = (1 - dist / connectionDistance) * 0.06;
+                        ctx.strokeStyle = `rgba(168, 85, 247, ${alpha})`;
+                        ctx.lineWidth = 1;
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>
